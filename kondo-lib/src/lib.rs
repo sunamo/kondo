@@ -31,9 +31,18 @@ const FILE_FSPROJ_SUFFIX: &str = ".fsproj";
 const FILE_TERRAFORM_HCL: &str = ".terraform.lock.hcl";
 const FILE_PROJECT_TURBOREPO: &str = "turbo.json";
 const FILE_PODFILE: &str = "Podfile";
+const FILE_GO_MOD: &str = "go.mod";
 
 const PROJECT_CARGO_DIRS: [&str; 2] = ["target", ".xwin-cache"];
-const PROJECT_NODE_DIRS: [&str; 2] = ["node_modules", ".angular"];
+const PROJECT_NODE_DIRS: [&str; 7] = [
+    "node_modules",
+    ".angular",
+    ".next",
+    ".parcel-cache",
+    "coverage",
+    "standalone",
+    ".cache",
+];
 const PROJECT_REACT_NATIVE_DIRS: [&str; 8] = [
     "node_modules",
     "android/build",
@@ -67,7 +76,7 @@ const PROJECT_UNREAL_DIRS: [&str; 5] = [
     "Intermediate",
 ];
 const PROJECT_JUPYTER_DIRS: [&str; 1] = [".ipynb_checkpoints"];
-const PROJECT_PYTHON_DIRS: [&str; 7] = [
+const PROJECT_PYTHON_DIRS: [&str; 9] = [
     ".mypy_cache",
     ".nox",
     ".pytest_cache",
@@ -75,6 +84,8 @@ const PROJECT_PYTHON_DIRS: [&str; 7] = [
     ".tox",
     "__pycache__",
     "__pypackages__",
+    ".venv",
+    "venv",
 ];
 const PROJECT_PIXI_DIRS: [&str; 1] = [".pixi"];
 const PROJECT_COMPOSER_DIRS: [&str; 1] = ["vendor"];
@@ -88,10 +99,22 @@ const PROJECT_ELIXIR_DIRS: [&str; 4] = ["_build", ".elixir-tools", ".elixir_ls",
 const PROJECT_SWIFT_DIRS: [&str; 2] = [".build", ".swiftpm"];
 const PROJECT_ZIG_DIRS: [&str; 3] = ["zig-cache", ".zig-cache", "zig-out"];
 const PROJECT_GODOT_4_DIRS: [&str; 1] = [".godot"];
-const PROJECT_DOTNET_DIRS: [&str; 2] = ["bin", "obj"];
+const PROJECT_DOTNET_DIRS: [&str; 10] = [
+    "bin",
+    "obj",
+    ".vs",
+    "TestResults",
+    "publish",
+    "AppPackages",
+    "nupkg",
+    "snupkg",
+    "BundleArtifacts",
+    "temp_check",
+];
 const PROJECT_TURBOREPO_DIRS: [&str; 1] = [".turbo"];
 const PROJECT_TERRAFORM_DIRS: [&str; 1] = [".terraform"];
 const PROJECT_COCOAPODS_DIRS: [&str; 1] = ["Pods"];
+const PROJECT_GO_DIRS: [&str; 1] = ["bin"];
 
 const PROJECT_CARGO_NAME: &str = "Cargo";
 const PROJECT_NODE_NAME: &str = "Node";
@@ -117,6 +140,7 @@ const PROJECT_DOTNET_NAME: &str = ".NET";
 const PROJECT_TURBOREPO_NAME: &str = "Turborepo";
 const PROJECT_TERRAFORM_NAME: &str = "Terraform";
 const PROJECT_COCOAPODS_NAME: &str = "CocoaPods";
+const PROJECT_GO_NAME: &str = "Go";
 
 #[derive(Debug, Clone)]
 pub enum ProjectType {
@@ -144,6 +168,7 @@ pub enum ProjectType {
     Turborepo,
     Terraform,
     Cocoapods,
+    Go,
 }
 
 #[derive(Debug, Clone)]
@@ -191,6 +216,7 @@ impl Project {
             ProjectType::Turborepo => &PROJECT_TURBOREPO_DIRS,
             ProjectType::Terraform => &PROJECT_TERRAFORM_DIRS,
             ProjectType::Cocoapods => &PROJECT_COCOAPODS_DIRS,
+            ProjectType::Go => &PROJECT_GO_DIRS,
         }
     }
 
@@ -310,6 +336,7 @@ impl Project {
             ProjectType::Turborepo => PROJECT_TURBOREPO_NAME,
             ProjectType::Terraform => PROJECT_TERRAFORM_NAME,
             ProjectType::Cocoapods => PROJECT_COCOAPODS_NAME,
+            ProjectType::Go => PROJECT_GO_NAME,
         }
     }
 
@@ -420,6 +447,7 @@ impl Iterator for ProjectIter {
                     FILE_PROJECT_TURBOREPO => Some(ProjectType::Turborepo),
                     FILE_TERRAFORM_HCL => Some(ProjectType::Terraform),
                     FILE_PODFILE => Some(ProjectType::Cocoapods),
+                    FILE_GO_MOD => Some(ProjectType::Go),
                     file_name if file_name.ends_with(FILE_UNREAL_SUFFIX) => {
                         Some(ProjectType::Unreal)
                     }
@@ -556,6 +584,7 @@ pub fn clean(project_path: &str) -> Result<(), Box<dyn error::Error>> {
                 FILE_GODOT_4_PROJECT => Some(ProjectType::Godot4),
                 FILE_TERRAFORM_HCL => Some(ProjectType::Terraform),
                 FILE_PODFILE => Some(ProjectType::Cocoapods),
+                FILE_GO_MOD => Some(ProjectType::Go),
                 _ => None,
             };
             if let Some(project_type) = p_type {
