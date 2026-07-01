@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  dev:
+    cmds:
+      - pwsh -NoProfile "E:\vs\Scripts_Projects\PowershellScripts\dev-preflight.ps1" -TaskName dev
+      - cargo run -p kondo
+
+  rel:
+    cmds:
+      - pwsh -NoProfile "E:\vs\Scripts_Projects\PowershellScripts\set-task-title-and-clear.ps1" -TaskName rel
+      - cargo build --release -p kondo
